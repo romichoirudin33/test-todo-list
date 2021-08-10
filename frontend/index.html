@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo List</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color: #eee;
+      }
+      .borderless td,
+      .borderless th {
+        border: none;
+      }
+      .slide-fade-enter-active {
+        transition: all 0.3s ease;
+      }
+      .slide-fade-leave-active {
+        transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+      }
+      .slide-fade-enter,
+      .slide-fade-leave-to {
+        transform: translateX(10px);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="pl-5">
+      <div class="row">
+        <div class="col-md-6 pt-5">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">My Task</span>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              v-on:click="createTodos()"
+            >
+              <i
+                class="fas"
+                v-bind:class="[showFormTodos ? 'fa-times' : 'fa-plus']"
+              ></i>
+            </button>
+          </h4>
+          <form class="card p-2" v-if="showFormTodos">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control shadow-none"
+                v-model="name_todos"
+                placeholder="Type Task ..."
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  v-on:click="saveTodos()"
+                >
+                  <i class="fas fa-check"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div style="max-height: 80vh; overflow-y: auto">
+            <ul class="list-group mb-3">
+              <li
+                class="
+                  list-group-item
+                  d-flex
+                  justify-content-between
+                  lh-condensed
+                "
+                v-for="todo in todos"
+              >
+                <div>
+                  <a href="#" v-on:click="showActivities(todo.id)">
+                    <h6 class="my-0">{{ todo.name }}</h6>
+                  </a>
+                </div>
+                <span class="text-muted">
+                  <button
+                    class="btn btn-outline-secondary shadow-none btn-sm"
+                    v-on:click="editTodos(todo.id, todo.name)"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn btn-outline-danger shadow-none btn-sm"
+                    v-on:click="destroyTodos(todo.id)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <transition name="slide-fade">
+          <div
+            class="col-md-6 bg-white pt-5 pr-5"
+            style="height: 98vh"
+            v-if="is_show_activity"
+          >
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted">Checklist</span>
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                v-on:click="is_show_activity = !is_show_activity"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </h4>
+            <div class="progress mb-3 w-60" style="height: 10px">
+              <div
+                class="progress-bar bg-succes"
+                :style="{width: score }"
+              ></div>
+            </div>
+
+            <div style="max-height: 80vh; overflow-y: auto">
+              <table class="table table-sm table-hover borderless">
+                <tr v-for="item in activities">
+                  <td width="2" class="text-center">
+                    <input
+                      type="checkbox"
+                      v-model="item.check"
+                      v-bind:id="item.id"
+                      v-on:click="updateCheckActivity(item.id, item.check)"
+                    />
+                  </td>
+                  <td>
+                    <a href="#" v-on:click="editActivities(item.id, item.name)">
+                      <del v-if="item.check">{{ item.name }}</del>
+                      <p class="m-0" v-if="!item.check">{{ item.name }}</p>
+                    </a>
+                  </td>
+                  <td width="1">
+                    <button
+                      class="btn btn-outline-danger shadow-none btn-sm"
+                      v-on:click="destroyActivity(item.id)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </table>
+              <form class="mt-4">
+                <div class="input-group mb-2" v-if="showFormActivity">
+                  <input
+                    type="text"
+                    class="form-control shadow-none"
+                    v-model="name_activities"
+                    placeholder="Type My Checklist ..."
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      v-on:click="saveActivities()"
+                    >
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                </div>
+                <button
+                  class="btn btn-primary shadow-none"
+                  v-on:click="createActivities()"
+                >
+                  <span class="fas fa-plus" v-if="!showFormActivity">
+                    Add item</span
+                  >
+                  <span class="fas fa-times" v-if="showFormActivity">
+                    Cancel</span
+                  >
+                </button>
+              </form>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/cf837a359f.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

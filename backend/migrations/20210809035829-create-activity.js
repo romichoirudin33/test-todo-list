@@ -1,46 +1,43 @@
-'use strict';
-
-const Todo = require("../Models/Todo");
-
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Activities', {
+    await queryInterface.createTable("Activities", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       check: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       // todoId: {
       //   type: Sequelize.DataTypes.INTEGER,
       // },
-      todoId: // name of the key we're adding 
-      {
+      // name of the key we're adding
+      todoId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Todos', // name of Target model
-          key: 'id', // key in Target model that we're referencing
+          model: "Todos", // name of Target model
+          key: "id", // key in Target model that we're referencing
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Activities');
-  }
+    await queryInterface.dropTable("Activities");
+  },
 };

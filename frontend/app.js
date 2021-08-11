@@ -1,6 +1,8 @@
 var app = new Vue({
   el: "#app",
   data: {
+    host: "http://localhost:3000/",
+
     todos: [],
     id_todos: null,
     name_todos: "",
@@ -23,7 +25,7 @@ var app = new Vue({
     getTodos() {
       var self = this;
       axios
-        .get("http://localhost:3000/todo")
+        .get(this.host + "todo")
         .then(function (response) {
           self.todos = response.data;
         })
@@ -49,7 +51,7 @@ var app = new Vue({
       if (this.is_edit_todos) {
         console.log("edit");
         axios
-          .put("http://localhost:3000/todo/" + this.id_todos, data, {
+          .put(this.host + "todo/" + this.id_todos, data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -63,7 +65,7 @@ var app = new Vue({
       } else {
         console.log("baru");
         axios
-          .post("http://localhost:3000/todo", data, {
+          .post(this.host + "todo", data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -79,7 +81,7 @@ var app = new Vue({
     destroyTodos(id) {
       var self = this;
       axios
-        .delete("http://localhost:3000/todo/" + id)
+        .delete(this.host + "todo/" + id)
         .then(function (response) {
           self.resetTodos();
         })
@@ -100,7 +102,7 @@ var app = new Vue({
       this.is_show_activity = true;
       this.id_todos = todo_id;
       axios
-        .get("http://localhost:3000/activity/" + todo_id + "/todo")
+        .get(this.host + "activity/" + todo_id + "/todo")
         .then(function (response) {
           var data = response.data;
           self.activities = data;
@@ -135,7 +137,7 @@ var app = new Vue({
       });
       if (this.is_edit_activities) {
         axios
-          .put("http://localhost:3000/activity/" + this.id_activities, data, {
+          .put(this.host + "activity/" + this.id_activities, data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -148,7 +150,7 @@ var app = new Vue({
           });
       } else {
         axios
-          .post("http://localhost:3000/activity", data, {
+          .post(this.host + "activity", data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -164,7 +166,7 @@ var app = new Vue({
     destroyActivity(id) {
       var self = this;
       axios
-        .delete("http://localhost:3000/activity/" + id)
+        .delete(this.host + "activity/" + id)
         .then(function (response) {
           self.resetActivity();
         })
@@ -178,7 +180,7 @@ var app = new Vue({
         check: !value,
       });
       axios
-        .put("http://localhost:3000/activity/" + id, data, {
+        .put(this.host + "activity/" + id, data, {
           headers: {
             "Content-Type": "application/json",
           },
